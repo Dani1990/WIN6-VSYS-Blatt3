@@ -6,11 +6,8 @@ import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.sun.javafx.scene.paint.GradientUtils.Parser;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Random;
 
 import rm.requestResponse.*;
@@ -33,6 +30,12 @@ public class PrimeClient {
 	static String requestMode;
 	int portClient;
 
+	// variables for avg times
+	long processingTimeSum;
+	long waitingTimeSum;
+	long communicationTimeSum;
+	int requestCount;
+
 	public PrimeClient(String hostname, int port, long initialValue, long count) {
 		this.hostname = hostname;
 		this.port = port;
@@ -49,8 +52,6 @@ public class PrimeClient {
 		for (long i = initialValue; i < initialValue + count; i++) {
 			processNumber(i);
 		}
-		;
-
 	}
 
 	public void processNumber(long value) throws IOException,
@@ -62,18 +63,36 @@ public class PrimeClient {
 		String answer = (String) communication.receive(portClient, true, true)
 				.getContent();
 		long answerTime = System.currentTimeMillis();
+
+		// Parse and process answer + Sysout
 		try {
+			requestCount++;
+
 			Object obj = parser.parse(answer);
 			JSONObject obj2 = (JSONObject) obj;
-			long time = answerTime - sendTime - 0; // TODO
-			System.out.println(value + ": " + (obj2.get("isPrime").toString() == new Boolean(true).toString() ? "prime" : "not prime")); 
+
+			boolean isPrime = (boolean) obj2.get("isPrime");
+			long processingTime = (long) obj2.get("processingTime");
+			processingTimeSum += processingTime;
+			long processingTimeAvg = processingTimeSum / requestCount;
+			long waitingTime = (long) obj2.get("waitingTime");
+			waitingTimeSum += waitingTime;
+			long waitingTimeAvg = waitingTimeSum / requestCount;
+			long communicationTime = answerTime - sendTime - waitingTime
+					- processingTime;
+			communicationTimeSum += communicationTime;
+			long communicationTimeAvg = communicationTimeSum / requestCount;
+
+			System.out.println(value + ": "
+					+ (isPrime ? "prime	" : "not prime	") + "	| p: "
+					+ processingTime + " (" + processingTimeAvg + ") ms"
+					+ " | w: " + waitingTime + " (" + waitingTimeAvg + ") ms"
+					+ " | c: " + communicationTime + " ("
+					+ communicationTimeAvg + ") ms");
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
-		
-
-		// System.out.println(answer);
 	}
 
 	public static void main(String args[]) throws IOException,

@@ -33,20 +33,15 @@ public class TaskThread implements Runnable {
 	@SuppressWarnings("unchecked")
 	public void run() {
 		// TODO Auto-generated method stub
-		JSONObject answer = new JSONObject();
-		
-		System.out.println("Server answer: " + JSONValue.toJSONString(answer));
 		
 		LOGGER.finer("Sending ...");
 		try {
-
 			Long request = (Long) msg.getContent();
 			
+			JSONObject answer = new JSONObject();
 			answer.put("isPrime", new Boolean(primeService(request.longValue())));
 			answer.put("processingTime", new Long(processingTime));
-			answer.put("processingTimeAvg", new Long(-1));
 			answer.put("waitingTime", new Long(waitingTime));
-			answer.put("waitingTimeAvg", new Long(-1));
 
 			// sende an Client zurück
 			communication.send(new Message("localhost", 0, new String(JSONValue.toJSONString(answer))),
