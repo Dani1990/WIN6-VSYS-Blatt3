@@ -62,10 +62,10 @@ public class ListenerThread extends Thread {
 			LOGGER.finer("Receiving ...");
 			try {
 				Message mess = communication.receive(port, true, false);
-
+				long receiveTime = System.currentTimeMillis();
 				System.out.println("Message from Port: [" + mess.getPort() + "] received!");
 
-				executor.execute(new TaskThread(communication, mess, counter));
+				executor.execute(new TaskThread(communication, mess, counter, receiveTime));
 				System.out.println(executor.toString());
 
 			} catch (ClassNotFoundException | IOException e) {
