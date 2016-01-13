@@ -58,11 +58,13 @@ public class PrimeClient {
 			ClassNotFoundException {
 		System.out.println("Client-Port: " + portClient);
 		long sendTime = System.currentTimeMillis();
+		System.out.println("sendTime: " + sendTime);
 		communication.send(new Message(hostname, portClient, new Long(value)),
 				port, false);
 		String answer = (String) communication.receive(portClient, true, true)
 				.getContent();
 		long answerTime = System.currentTimeMillis();
+		System.out.println("answerTime: " + answerTime);
 
 		// Parse and process answer + Sysout
 		try {
@@ -80,6 +82,8 @@ public class PrimeClient {
 			long waitingTimeAvg = waitingTimeSum / requestCount;
 			long communicationTime = answerTime - sendTime - waitingTime
 					- processingTime;
+			communicationTime = (communicationTime < 0 ? -communicationTime : communicationTime);
+			System.out.println("a: " + answerTime + ", s: " + sendTime + ", w: " + waitingTime + ", p: " + processingTime);
 			communicationTimeSum += communicationTime;
 			long communicationTimeAvg = communicationTimeSum / requestCount;
 

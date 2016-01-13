@@ -42,7 +42,7 @@ public class ListenerThread extends Thread {
 		String input = "N";
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-		System.out.println("FixedPool? 10 Threads [Y/N]");
+		System.out.println("FixedPool? 2 Threads [Y/N]");
 		try {
 			input = reader.readLine();
 		} catch (IOException e1) {
@@ -50,10 +50,12 @@ public class ListenerThread extends Thread {
 			e1.printStackTrace();
 		}
 
-		if (input.equals("Y")) {
-			executor = Executors.newFixedThreadPool(10);
+		if (input.equals("Y") || input.equals("y")) {
+			executor = Executors.newFixedThreadPool(2);
+			System.out.println("Fixed");
 		} else {
 			executor = Executors.newCachedThreadPool();
+			System.out.println("Cached");
 		}
 
 		while (true) {

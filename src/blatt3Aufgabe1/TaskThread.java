@@ -59,7 +59,7 @@ public class TaskThread implements Runnable {
 
 	private boolean primeService(long number) {
 		waitingTime = System.currentTimeMillis() - receiveTime;
-		final long timeStart = System.currentTimeMillis();
+		long timeStart = System.currentTimeMillis();
 		for (long i = 2; i < Math.sqrt(number) + 1; i++) {
 			if (number % i == 0) {
 				processingTime = System.currentTimeMillis() - timeStart;
